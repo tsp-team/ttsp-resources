@@ -1,0 +1,8 @@
+LightmappedGeneric
+{
+    "$basetexture"      "museum/materials/bambooWood_albedo.png"
+    "$bumpmap"          "museum/materials/bambooWood_normal.png"
+    "$arme"             "museum/materials/bambooWood_arme.png"
+    
+    "$envmap"           "env_cubemap"
+}

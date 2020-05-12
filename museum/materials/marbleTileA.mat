@@ -1,0 +1,10 @@
+LightmappedGeneric
+{
+    "$basetexture"  "museum/materials/marbleTileA_albedo.png"
+    "$bumpmap"      "museum/materials/marbleTileA_normal.png"
+    "$arme"         "museum/materials/marbleTileA_arme.png"
+    
+    "$envmap"       "env_cubemap"
+    
+    "$surfaceprop"  "tile"
+}

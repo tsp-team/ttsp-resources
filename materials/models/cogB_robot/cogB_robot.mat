@@ -1,0 +1,8 @@
+VertexLitGeneric
+{
+	"$basetexture"	"materials/models/cogB_robot/cogB_robot_albedo.png"
+	"$arme"			"materials/models/cogB_robot/cogB_robot_arme.png"
+	"$bumpmap"		"materials/models/cogB_robot/cogB_robot_normal.png"
+	"$envmap"			"env_cubemap"
+	"$selfillum"		"1"
+}

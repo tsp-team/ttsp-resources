@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	"$basetexture"    "phase_14/maps/gumballShooter/gumballShooter_albedo.png"
+    "$translucent"      "1"
+    
+	"$bumpmap"        "phase_14/maps/gumballShooter/gumballShooter_normal.png"
+	"$arme"            "phase_14/maps/gumballShooter/gumballShooter_arme.png"
+	"$envmap"    "env_cubemap"
+    
+    "$lightwarp"    "phase_14/maps/weapon_lightwarp.jpg"
+}

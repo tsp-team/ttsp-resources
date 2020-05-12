@@ -1,0 +1,8 @@
+LightmappedGeneric
+{
+	"$basetexture"	"museum/materials/marbleSpeckled_albedo.png"
+	"$bumpmap"		"museum/materials/marbleSpeckled_normal.png"
+	"$arme"			"museum/materials/marbleSpeckled_arme.png"
+	
+	"$envmap"		"env_cubemap"
+}

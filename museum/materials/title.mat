@@ -1,0 +1,7 @@
+LightmappedGeneric
+{
+    "$basetexture"      "museum/materials/title.png"
+    "$envmap"           "env_cubemap"
+    "$roughness"        "0.0"
+    "$metallic"         "0.0"
+}

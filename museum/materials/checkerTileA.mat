@@ -1,0 +1,10 @@
+LightmappedGeneric
+{
+	"$basetexture"	"museum/materials/checkerTileA_albedo.png"
+	"$bumpmap"		"museum/materials/checkerTileA_normal.png"
+	"$arme"			"museum/materials/checkerTileA_arme.png"
+	
+	"$envmap"		"env_cubemap"
+    
+    "$surfaceprop"  "tile"
+}

@@ -1,0 +1,7 @@
+VertexLitGeneric
+{
+    "$basetexture"      "museum/materials/metal_albedo.png"
+    "$envmap"           "env_cubemap"
+    "$roughness"        "0.3"
+    "$metallic"         "1.0"
+}

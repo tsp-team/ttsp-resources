@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	"$basetexture" "phase_14/hl2/v_hand_sheet.png"
+	"$bumpmap" "phase_14/hl2/v_hand_sheet_normal.png"
+	"$arme"		"phase_14/hl2/v_hand_sheet_arme.png"
+}

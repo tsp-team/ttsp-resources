@@ -1,0 +1,8 @@
+LightmappedGeneric
+{
+	"$basetexture"			"phase_14/maps/ladder.png"
+    "$surfaceprop"          "metalfloor"
+    "$envmap"				"env_cubemap"
+    "$envmaptint"     		".08 .08 .08"
+    "$bumpmap"            "phase_14/maps/ladder_bump.png"
+}

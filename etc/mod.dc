@@ -1,0 +1,85 @@
+from src.mod.ModBattleZone/AI import ModBattleZone/AI
+from src.mod.CogStomper/AI import CogStomper/AI
+from src.mod.CogCage/AI import CogCage/AI
+from src.mod.ModPlayer/AI import ModPlayer/AI
+from src.mod.JellybeanPickup/AI import JellybeanPickup/AI
+from src.mod.NPC_VP/AI import NPC_VP/AI
+from src.mod.NPC_VP/AI import Gear/AI
+from src.mod.NPC_VP/AI import VPSuit/AI
+from src.mod.NPC_VP/AI import VPGoon/AI
+from src.mod.CodeNumberPickup/AI import CodeNumberPickup/AI
+from src.mod.Keypad/AI import Keypad/AI
+from src.mod.LaffBarrel/AI import LaffBarrel/AI
+
+dclass JellybeanPickup : DistributedEntity {
+  pickup() clsend airecv;
+};
+
+dclass ModBattleZone : DistributedBattleZone {
+  respawn();
+  lose(uint8 youDied = 0) broadcast;
+  shutdown() clsend airecv;
+  
+  beginWave(uint16 waveNum, uint16 suits) broadcast;
+  endWave() broadcast;
+  incWaveProgress() broadcast;
+  
+  updateWaveStats(uint16 damageDealt, uint16 damageTaken,
+                  uint16 cogsDestroyed, uint16 money, float64 time) broadcast;
+                  
+  updateGameStats(uint16 damageDealt, uint16 damageTaken,
+                  uint16 cogsDestroyed, uint16 money,
+                  float64 time, uint16 waves) broadcast;
+};
+
+dclass CogStomper : DistributedEntity {
+  setData(uint32 / 100, uint16 / 10, uint16 / 10, Point3) required broadcast ram;
+};
+
+dclass CogCage : DistributedEntity {
+  requestOpen() clsend airecv;
+};
+
+dclass ModPlayer : DistributedToon {
+  setView(float64 x, float64 y, float64 z,
+          float64 h, float64 p, float64 r) required broadcast ram ownsend airecv;
+          
+  setMoney(uint16) required broadcast ram;
+  
+  setCodeNumbers(uint8[]) required broadcast ram;
+  
+  doVPJumpCameraShake();
+};
+
+dclass NPC_VP : DistributedAvatar {
+  openFrontDoor() broadcast;
+  closeFrontDoor() broadcast;
+  openRearDoor() broadcast;
+  closeRearDoor() broadcast;
+};
+
+dclass Gear : LinearProjectile {
+
+};
+
+dclass VPSuit : DistributedSuit {
+};
+
+dclass VPGoon : NPC_Goon {
+};
+
+dclass CodeNumberPickup : DistributedEntity {
+  setNumber(uint8) required broadcast ram;
+  pickup() clsend airecv;
+};
+
+dclass Keypad : DistributedEntity {
+  setNumbers(uint8[]) required broadcast ram;
+  pressButton(uint8) clsend airecv;
+};
+
+dclass LaffBarrel : DistributedEntity {
+  startUse() clsend airecv;
+  stopUse() clsend airecv;
+  giveLaffTo(uint32) broadcast;
+};

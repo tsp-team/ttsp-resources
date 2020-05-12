@@ -1,0 +1,9 @@
+*.mf
+/.project
+revamp
+non_revamp
+raw_dna/compiled
+*.ext
+*.log
+*.prt
+*.auto*.map

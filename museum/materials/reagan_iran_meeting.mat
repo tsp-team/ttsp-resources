@@ -1,0 +1,7 @@
+LightmappedGeneric
+{
+    "$basetexture"      "museum/materials/reagan_iran_meeting.jpg"
+    "$envmap"           "env_cubemap"
+    "$roughness"        "0.0"
+    "$metallic"         "0.0"
+}

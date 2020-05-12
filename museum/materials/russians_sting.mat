@@ -1,0 +1,7 @@
+LightmappedGeneric
+{
+    "$basetexture"      "museum/materials/russians_sting.jpg"
+    "$envmap"           "env_cubemap"
+    "$roughness"        "0.0"
+    "$metallic"         "0.0"
+}

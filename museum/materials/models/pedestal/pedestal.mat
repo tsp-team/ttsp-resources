@@ -1,0 +1,8 @@
+VertexLitGeneric
+{
+    "$basetexture"      "museum/materials/models/pedestal/pedestal_albedo.png"
+    //"$bumpmap"          "museum/materials/models/pedestal/pedestal_normal.png"
+    "$arme"             "museum/materials/models/pedestal/pedestal_arme.png"
+    
+    "$envmap"           "env_cubemap"
+}

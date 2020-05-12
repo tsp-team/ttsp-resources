@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	"$basetexture"			"phase_3/maps/neckGeneric.jpg"
+    
+    "$halflambert"		"1"
+}

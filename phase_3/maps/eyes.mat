@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	"$basetexture"			"phase_3/maps/eyes.jpg"
+	"$basetexture_alpha"	"phase_3/maps/eyes_a.rgb"
+	"$translucent"			"1"
+
+	"$rimlight"             "1"
+    "$lightwarp"            "phase_3/maps/toon_lightwarp.jpg"
+    
+    "$halflambert"		"1"
+}

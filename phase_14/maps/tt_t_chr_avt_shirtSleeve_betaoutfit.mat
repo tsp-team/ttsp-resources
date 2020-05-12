@@ -1,0 +1,9 @@
+VertexLitGeneric
+{
+	"$basetexture"		"phase_14/maps/tt_t_chr_avt_shirtSleeve_betaoutfit.jpg"
+    
+    "$rimlight"         "1"
+    "$lightwarp"            "phase_3/maps/toon_lightwarp.jpg"
+    
+    "$halflambert"		"1"
+}

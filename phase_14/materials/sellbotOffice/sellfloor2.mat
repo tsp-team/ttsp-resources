@@ -1,0 +1,8 @@
+LightmappedGeneric
+{
+    "$basetexture"      "phase_14/maps/sellbotOffice/sellfloor2.png"
+    "$bumpmap"          "phase_14/maps/sellbotOffice/sellfloor1_bump.png"
+    
+    "$envmap"           "env_cubemap"
+    "$arme"             "phase_14/maps/sellbotOffice/sellfloor1_arme.png"
+}

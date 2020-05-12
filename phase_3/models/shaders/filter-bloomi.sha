@@ -1,0 +1,60 @@
+//Cg
+//
+// blend.rgb
+//
+//   This shader converts to black-and-white before calculating
+//   scene brightness.  To do this, it uses a weighted average of
+//   R,G,B.  The blend parameter controls the weighting.
+//
+// desat.x
+//
+//   Desaturation level.  If zero, the bloom's color is equal to
+//   the color of the input pixel.  If one, the bloom's color is
+//   white.
+//
+// trigger.x
+//
+//   Must be equal to mintrigger.
+//
+//   mintrigger is the minimum brightness to trigger a bloom,
+//   and maxtrigger is the brightness at which the bloom
+//   reaches maximum intensity.
+//
+// trigger.y
+//
+//   Must be equal to (1.0/(maxtrigger-mintrigger)) where
+//   
+//   mintrigger is the minimum brightness to trigger a bloom,
+//   and maxtrigger is the brightness at which the bloom
+//   reaches maximum intensity.
+//
+
+
+void vshader(float4 vtx_position : POSITION,
+             out float4 l_position : POSITION,
+             out float2 l_texcoord : TEXCOORD0,
+             uniform float4 texpad_src,
+             uniform float4 texpix_src,
+             uniform float4x4 mat_modelproj)
+{
+  l_position=mul(mat_modelproj, vtx_position);
+  float2 c=(vtx_position.xz * texpad_src.xy) + texpad_src.xy;
+  l_texcoord = c;
+}
+
+void fshader(float2 l_texcoord : TEXCOORD0,
+             uniform sampler2D k_src : TEXUNIT0,
+             out float4 o_color : COLOR,
+             uniform float4 k_blend,
+             uniform float4 k_trigger,
+             uniform float4 k_desat
+             )
+{
+  float4 scene_color = tex2D(k_src, l_texcoord);
+  float3 luminance_weights = float3( 0.2125, 0.7154, 0.0721 );
+  float luminance = dot(scene_color.rgb, luminance_weights);
+  
+  o_color.rgb = scene_color.rgb * ((luminance - k_trigger.x) * k_trigger.y);
+  o_color.a = 1.0;
+}
+

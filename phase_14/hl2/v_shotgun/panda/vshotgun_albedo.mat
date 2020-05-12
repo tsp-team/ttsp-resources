@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	"$basetexture" 			"phase_14/hl2/v_shotgun/panda/vshotgun_albedo.png"
+	"$bumpmap" 				"phase_14/hl2/v_shotgun/panda/vshotgun_normal.png"
+	
+	"$arme"					"phase_14/hl2/v_shotgun/panda/vshotgun_arme.png"
+	
+	//"$envmap"				"env_cubemap"
+	
+	"$selfillum" 			"1"
+}

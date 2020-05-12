@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	"$basetexture"			"phase_3/maps/avatar_palette_1lmla_2.jpg"
+	
+	"$rimlight"             "1"
+    "$lightwarp"            "phase_3/maps/toon_lightwarp.jpg"
+    
+    "$halflambert"		"1"
+    
+    "$arme"             "phase_3/maps/avatar_palette_1lmla_2_arme.png"
+}
