@@ -3,7 +3,7 @@
 # is deprecated in Panda.)
 
 from panda3d.core import *
-from libpandabsp import *
+from panda3d.bsp import *
 
 import os
 import sys
