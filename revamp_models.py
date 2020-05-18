@@ -209,7 +209,7 @@ def __threadRevamp(models):
 
                 if stateDict:
 
-                    for i, mat in stateDict.iteritems():
+                    for i, mat in stateDict.items():
                         print(i, mat)
 
                     bspAttr = stateDict.get(matName, None)
@@ -255,7 +255,7 @@ def __threadRevamp(models):
                 node2clsType2mat[name] = stateDict
                 node.setTag('Material', str(pos))
 
-                for i, mat in stateDict.iteritems():
+                for i, mat in stateDict.items():
                     print(i, mat)
 
             def replaceMaterialsWithTexture(node):
