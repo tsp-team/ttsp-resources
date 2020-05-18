@@ -30,7 +30,7 @@ if normals:
 cmd += "-tbnall "
 cmd += inp_file
 os.system(cmd)
-        
+
 lbr()
 
 loader = Loader.getGlobalPtr()
@@ -55,14 +55,14 @@ for meshNp in meshes:
     mat = BSPMaterial.getFromFile(mat_file)
     meshNp.setAttrib(BSPMaterialAttrib.make(mat))
     if mat.hasTransparency():
-        print meshNp.getName(), "has $translucent or $alpha"
+        print(meshNp.getName(), "has $translucent or $alpha")
         meshNp.setTransparency(TransparencyAttrib.MDual, 1)
     dbs = raw_input("\tDouble sided? [Y/N]: ").lower()
     if dbs == "y":
         meshNp.setTwoSided(True, 1)
-    
+
 lbr()
-    
+
 optimizeStr = ""
 optimize = False
 while (optimizeStr not in ["y", "n"]):
@@ -71,19 +71,19 @@ while (optimizeStr not in ["y", "n"]):
         optimize = True
     elif optimizeStr == "n":
         optimize = False
-        
+
 lbr()
 
 if optimize:
     print("\nModel before optimization:")
     np.ls()
-    
+
     np.flattenStrong()
-    
+
     print("\nModel after optimization:")
     np.ls()
     print
-    
+
 lbr()
 
 print("Writing {0}...".format(out_file))

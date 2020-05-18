@@ -19,18 +19,18 @@ def alreadyHasVertexData(vdata):
         if vdata.compareTo(data) == 0:
             return True
     return False
-    
+
 class VertexReference:
     pass
-    
+
 currentMdlFile = ""
 currentGeomNode = ""
 
 class VertexData:
-    
+
     def __init__(self, vdata):
         self.vdata = vdata
-        
+
         format = GeomVertexFormat(self.vdata.getFormat())
         for i in range(format.getNumArrays()):
             array = format.modifyArray(i)
@@ -38,7 +38,7 @@ class VertexData:
                 array.addColumn('normal', 3, GeomVertexFormat.NT_stdfloat, GeomVertexFormat.C_normal)
                 format.setArray(i, array)
         self.vdata.setFormat(GeomVertexFormat.registerFormat(format))
-            
+
         self.primitives = []
         self.vertices = []
         for i in range(vdata.getNumRows()):
@@ -57,10 +57,10 @@ class VertexData:
                 if pos == vertPos:
                     vert.similarVerts.append(self.vertices[j])
         """
-            
+
         self.geoms = []
         self.geomStates = []
-        
+
     def collectVertexNormals(self):
         collection = {}
         for prim in self.primitives:
@@ -74,13 +74,13 @@ class VertexData:
                     collection[pos] = [ref]
                 else:
                     collection[pos].append(ref)
-                    
+
         return collection
-        
+
     def applyNormals(self):
         cosAngle = math.cos(deg2Rad(90.0))
         collection = self.collectVertexNormals()
-        
+
         # First apply face normals
         #writer = GeomVertexWriter(self.vdata)
         #for prim in self.primitives:
@@ -88,14 +88,14 @@ class VertexData:
         #        writer.setRow(row)
         #        writer.setColumn(InternalName.getNormal())
         #        writer.setData3f(prim.normal)
-        
+
         citerator = collection.items()
         ci = 0
         while (ci < len(citerator)):
             group = citerator[ci][1]
             pos = citerator[ci][0]
-            #print "{0} polygons on vertex at position {1}".format(len(group), pos)
-            
+            #print("{0} polygons on vertex at position {1}".format(len(group), pos))
+
             gi = 0
             while (gi < len(group)):
                 baseRef = group[gi]
@@ -103,7 +103,7 @@ class VertexData:
                 leftoverGroup = []
                 newGroup.append(baseRef)
                 gi += 1
-                
+
                 while (gi < len(group)):
                     ref = group[gi]
                     dot = baseRef.normal.dot(ref.normal)
@@ -112,35 +112,35 @@ class VertexData:
                     else:
                         leftoverGroup.append(ref)
                     gi += 1
-                    
+
                 self.doComputeVertexNormals(newGroup)
                 group = leftoverGroup
                 gi = 0
             ci += 1
-        
+
     def doComputeVertexNormals(self, group):
-    
+
         normal = Vec3(0)
         for ref in group:
             normal += ref.normal
         normal /= float(len(group))
         normal.normalize()
-        
+
         for ref in group:
-        
+
             row = ref.polygon.origVertices[ref.vertex]
-            #print "orig vertex", row
-            
+            #print("orig vertex", row)
+
             reader = GeomVertexReader(self.vdata)
             reader.setColumn('vertex')
             reader.setRow(row)
-            #print reader.getData3f()
-            
+            #print(reader.getData3f())
+
             #if self.vdata.hasColumn('transform_blend'):
             #    reader.setColumn('transform_blend')
             #    reader.setRow(row)
-            #    print "Transform blend before:", reader.getData1f()
-            
+            #    print("Transform blend before:", reader.getData1f())
+
             # Create a unique vertex in the table for this polygon
             temp = GeomVertexData('temp', self.vdata.getFormat(), self.vdata.getUsageHint())
             temp.setNumRows(1)
@@ -148,32 +148,32 @@ class VertexData:
             twriter = GeomVertexWriter(temp, 'normal')
             twriter.setRow(0)
             twriter.setData3f(normal)
-            
+
             #if temp.hasColumn('transform_blend'):
             #    treader = GeomVertexReader(temp, 'transform_blend')
             #    treader.setRow(0)
-            #    print "Transform blend copy:", treader.getData1f()
-                
-            #print treader.getData3f()
-            
+            #    print("Transform blend copy:", treader.getData1f())
+
+            #print(treader.getData3f())
+
             newRow = self.vdata.getNumRows()
             self.vdata.setNumRows(newRow + 1)
             self.vdata.copyRowFrom(newRow, temp, 0, Thread.getCurrentThread())
-            
+
             #if self.vdata.hasColumn('transform_blend'):
             #    nreader = GeomVertexReader(self.vdata)
             #    nreader.setColumn('transform_blend')
             #    nreader.setRow(newRow)
-            #    print "Transform blend after 2:", nreader.getData1f()
-            
+            #    print("Transform blend after 2:", nreader.getData1f())
+
             #nreader.setColumn('vertex')
             #nreader.setRow(newRow)
-            #print nreader.getData3f()
-            
-            #print "Polygon vertices before", ref.polygon.vertices
-            
+            #print(nreader.getData3f())
+
+            #print("Polygon vertices before", ref.polygon.vertices)
+
             ref.polygon.vertices[ref.vertex] = newRow
-            
+
     def applyNormalsNah(self):
         writer = GeomVertexWriter(self.vdata)
         for vert in self.vertices:
@@ -202,7 +202,7 @@ class Primitive:
             vert.primitivesUsing.append(self)
             for similarVert in vert.similarVerts:
                 similarVert.primitivesUsing.append(self)
-            
+
         self.normal = Vec3(0)
         # Now that we have the vertex positions for this primitive,
         # calculate the face normal.
@@ -213,10 +213,10 @@ class Primitive:
             self.normal[1] += v0[2] * v1[0] - v0[0] * v1[2]
             self.normal[2] += v0[0] * v1[1] - v0[1] * v1[0]
         self.normal.normalize()
-        
+
         self.vpositions = vpositions
         self.primitive = primitive
-        
+
     def getNormal(self):
         return self.normal
 
@@ -232,7 +232,7 @@ class Vertex:
         self.primitivesUsing = []
         self.similarVerts = []
         self.smooth = True
-        
+
     def calcNormal(self):
         normal = Vec3(0)
         if self.smooth:
@@ -244,7 +244,7 @@ class Vertex:
         elif len(self.primitivesUsing) > 0:
             normal = self.primitivesUsing[0].normal
         return normal
-        
+
 def processPrimitive(prim, vdata, geom):
     prim = prim.decompose()
     prims = prim.getNumPrimitives()
@@ -253,15 +253,16 @@ def processPrimitive(prim, vdata, geom):
         end = prim.getPrimitiveEnd(i)
         primData = Primitive(prim, start, end, vdata, geom)
         vertexDatas[vdata].primitives.append(primData)
-        
+
 def processGeom(geom, state):
     global vertexDatas    origVData = geom.getVertexData()
-    if not orig2modVdata.has_key(origVData):        vdata = geom.modifyVertexData()        orig2modVdata[origVData] = vdata        vertexDatas[vdata] = VertexData(vdata)    else:        vdata = orig2modVdata[origVData]            if not vertexDatas.has_key(vdata):        # question mark?        return 0        
+    if not orig2modVdata.has_key(origVData):        vdata = geom.modifyVertexData()        orig2modVdata[origVData] = vdata        vertexDatas[vdata] = VertexData(vdata)    else:        vdata = orig2modVdata[origVData]    if not vertexDatas.has_key(vdata):        # question mark?        return 0
     vertexDatas[vdata].geoms.append(geom)
-    vertexDatas[vdata].geomStates.append(state)    #print "appended geom", geom, "to vertex data", vertexDatas[vdata]
+    vertexDatas[vdata].geomStates.append(state)
+    #print("appended geom", geom, "to vertex data", vertexDatas[vdata])
     for i in range(geom.getNumPrimitives()):
         prim = geom.modifyPrimitive(i)
-        processPrimitive(prim, vdata, len(vertexDatas[vdata].geoms) - 1)            return 1
+        processPrimitive(prim, vdata, len(vertexDatas[vdata].geoms) - 1)    return 1
 
 def processGeomNode(geomNode):
     # A GeomNode is a node in the scene graph which contains Geom objects,
@@ -271,73 +272,79 @@ def processGeomNode(geomNode):
     #
     # To calculate a vertex normal for each vertex of the GeomVertexDatas,
     # we must walk through each primitive of each Geom
-    
+
     global currentGeomNode
     currentGeomNode = geomNode.getName()
-    
+
     global vertexDatas
     vertexDatas = {}    orig2modVdata = {}
-    
+
     for i in range(geomNode.getNumGeoms()):
         geom = geomNode.modifyGeom(i)
         if not processGeom(geom, geomNode.getGeomState(i)):            return 0
-        
+
     geomNode.removeAllGeoms()
-    
+
     for vertexData in vertexDatas.values():
         vertexData.applyNormals()
-        
+
         # remove unused vertices
         references = []
         for row in range(vertexData.vdata.getNumRows()):
             references.append(0)
             for prim in vertexData.primitives:
                 if row in prim.vertices:
-                    references[row] += 1                           # This is a cheat, we know that all of the unreferenced vertices are at the beginning.        # So we'll just subtract the number of unreferenced vertices from each primitive index.        unreferenced = references.count(0)        for prim in vertexData.primitives:            for i in range(len(prim.vertices)):                prim.vertices[i] -= unreferenced                        newData = GeomVertexData(vertexData.vdata.getName(), vertexData.vdata.getFormat(), vertexData.vdata.getUsageHint())        for i in range(unreferenced, vertexData.vdata.getNumRows()):            newData.copyRowFrom(i - unreferenced, vertexData.vdata, i, Thread.getCurrentThread())                    vertexData.vdata = newData
-        
+                    references[row] += 1        # This is a cheat, we know that all of the unreferenced vertices are at the beginning.        # So we'll just subtract the number of unreferenced vertices from each primitive index.        unreferenced = references.count(0)        for prim in vertexData.primitives:            for i in range(len(prim.vertices)):                prim.vertices[i] -= unreferenced  GeomVertexData(vertexData.vdata.getName(), vertexData.vdata.getFormat(), vertexData.vdata.getUsageHint())        for i in range(unreferenced, vertexData.vdata.getNumRows()):            newData.copyRowFrom(i - unreferenced, vertexData.vdata, i, Thread.getCurrentThread())   ata.vda
+
         for i in range(len(vertexData.geoms)):            geom = vertexData.geoms[i]
             geom.clearPrimitives()            state = vertexData.geomStates[i]            # Apply the modified GeomVertexData to the Geom.            # It should have a new filled in vertex normal column.            geom.setVertexData(vertexData.vdata)            geomNode.addGeom(geom, state)
-        
-        for primData in vertexData.primitives:            if len(primData.vertices) < 3:                print "Error: primitive with less than 3 verts"                return 0                continue                
+
+        for primData in vertexData.primitives:
+            if len(primData.vertices) < 3:
+                print("Error: primitive with less than 3 verts")
+                return 0
+                continue
             prim = GeomTriangles(primData.primitive.getUsageHint())
             geom = vertexData.geoms[primData.geomIdx]
             prim.addVertices(*primData.vertices)
             prim.closePrimitive()
             geom.addPrimitive(prim)
-            
+
             vertexData.geoms[primData.geomIdx] = geom
-            
+
             #reader = GeomVertexReader(vertexData.vdata)
             #if vertexData.vdata.hasColumn('transform_blend'):
             #    reader.setColumn('transform_blend')
-            #    print "Transform blend:"
+            #    print("Transform blend:")
             #    for i in range(len(primData.vertices)):
             #        reader.setRow(primData.vertices[i])
             #        data = reader.getData1f()
-            #        print "\t", data
-                for i in range(len(vertexData.geoms)):            geom = vertexData.geoms[i]            state = vertexData.geomStates[i]            geomNode.addGeom(geom, state)
-            return 1
+            #        print("\t", data)
+        for i in range(len(vertexData.geoms)):            geom = vertexData.geoms[i]            state = vertexData.geomStates[i]            geomNode.addGeom(geom, state)
+    return 1
 
 def processModel(mdlFile):
-    print "Processing model file `{0}`".format(mdlFile)
+    print("Processing model file `{0}`".format(mdlFile))
     global currentMdlFile
     currentMdlFile = mdlFile.getFullpath()
     mdl = NodePath(Loader.getGlobalPtr().loadSync(mdlFile))
-    
+
     if not isAnimation(mdl):
         geomNodes = mdl.findAllMatches("**/+GeomNode")
         for gnnp in geomNodes:
-            if not processGeomNode(gnnp.node()):                print "Skipping, error processing"                return
+            if not processGeomNode(gnnp.node()):
+                print("Skipping, error processing")
+                return
         outFilename = Filename(mdlFile.getFullpath().replace("non_revamp", "revamp2"))
         if (not os.path.exists(outFilename.getDirname())):
             os.makedirs(outFilename.getDirname())
         mdl.writeBamFile(outFilename)
     else:
-        print "It's an animation, skipping"
-        
+        print("It's an animation, skipping")
+
     mdl.removeNode()
     del mdl
-        
+
 for mdl in orig_models:
     processModel(Filename.fromOsSpecific(mdl))
 

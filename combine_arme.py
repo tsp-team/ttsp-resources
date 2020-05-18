@@ -16,7 +16,7 @@ def setChannel(img, x, y, channel, val):
         img.setBlue(x, y, val)
     elif channel == CHANNEL_EMISSIVE:
         img.setAlpha(x, y, val)
-        
+
 def getChannel(img, x, y, channel):
     if channel == CHANNEL_AO:
         return img.getRed(x, y)
@@ -61,7 +61,7 @@ for i in range(len(fImgs)):
         img.makeRgb()
         if is_sRGB:
             # Convert to linear
-            print "Converting", getChannelName(i), "to linear"
+            print("Converting", getChannelName(i), "to linear")
             img.applyExponent(2.2)
         if not foundSize:
             size = [img.getReadXSize(), img.getReadYSize()]
@@ -71,13 +71,13 @@ for i in range(len(fImgs)):
         # assume it is a constant value
         val = float(fImg.getFullpath())
         if is_sRGB:
-            print "Converting", getChannelName(i), "to linear"
+            print("Converting", getChannelName(i), "to linear")
             # Convert to linear
             val = math.pow(val, 2.2)
         imgs[i] = val
-        
-print "Size:", size
-        
+
+print("Size:", size)
+
 output = PNMImage(*size)
 output.setNumChannels(4)
 output.setColorType(PNMImageHeader.CTFourChannel)
@@ -86,17 +86,15 @@ output.alphaFill(1.0)
 
 for channel, img in imgs.items():
     img
-    print "Filling in", getChannelName(channel), "channel..."
+    print("Filling in", getChannelName(channel), "channel...")
     if isinstance(img, float):
-        print "Value", img
+        print("Value", img)
     for x in range(size[0]):
         for y in range(size[1]):
             if isinstance(img, float):
                 setChannel(output, x, y, channel, img)
             else:
                 setChannel(output, x, y, channel, getChannel(img, x, y, 0))
-            
+
 outputFile = Filename(raw_input("Output image: "))
 output.write(outputFile)
-        
-    

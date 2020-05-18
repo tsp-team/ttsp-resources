@@ -16,7 +16,7 @@ from panda3d.bsp import *
 
 loadPrcFileData("", "notify-level-bspmaterial fatal")
 
-print "Revamping models, this might take several minutes..."
+print("Revamping models, this might take several minutes...")
 
 from direct.showbase.Loader import Loader
 from direct.stdpy.threading import Thread, Lock
@@ -75,7 +75,7 @@ def is_animation(node):
 
 def get_character(node):
     return node.find("**/+Character")
-    
+
 def egg_extract_bin_name(line):
     line = line.split("<Scalar> bin { ")[1]
     line = line.split(" }")[0]
@@ -90,7 +90,7 @@ phases = [3.5]#[3, 3.5, 4, 5, 5.5]#[3, 3.5, 4, 5, 5.5, 6, 7, 8, 9, 10, 11, 12, 1
 # Revamp textures:
 
 if (fix_textures):
-    print "Fixing grayscale textures..."
+    print("Fixing grayscale textures...")
 
     orig_textures = []
 
@@ -104,7 +104,7 @@ if (fix_textures):
         fnout = Filename("revamp/rgb/" + tex)
         image = PNMImage(fn)
         if (image.getColorType() == PNMImageHeader.CT_grayscale):
-            print "Processing " + tex + "..."
+            print("Processing " + tex + "...")
             # Toontown has textures in a one-component grayscale format.
             # This doesn't seem to work well in Panda's shader generator.
             # Convert to rgb format.
@@ -125,26 +125,26 @@ FNULL = open(os.devnull, 'w')
 
 for phase in phases:
     orig_models += glob2.glob("phase_{0}\\models\\**\\*.bam".format(phase))
-    
+
 __progress = 0
 
 def runproc(cmd):
     subprocess.call(cmd, stdin=FNULL, stdout=FNULL, stderr=FNULL)
-    
+
 errors = []
 def report_error(model, error_msg):
     global errors
-    
-    print "Error whilst processing model {0}: {1}".format(model, error_msg)
-    
+
+    print("Error whilst processing model {0}: {1}".format(model, error_msg))
+
     error_lock.acquire()
     errors.append((model, error_msg))
     error_lock.release()
-    
+
 def __threadRevamp(models):
     id_alloc = UniqueIdAllocator(0, 9999999)
     temp_mat_alloc = UniqueIdAllocator(0, 9999999)
-    
+
     # Returns an temporary render attrib to use as a replacement
     # for BSPMaterialAttrib to keep Geoms unique
     def get_material_temp_replacement():
@@ -152,11 +152,11 @@ def __threadRevamp(models):
         matr = Material("temp_mat_{0}".format(tempId))
         matr.setMetallic(tempId)
         return MaterialAttrib.make(matr)
-        
+
     def texture_from_bsp_mat(mattr):
         if not mattr:
             return None
-            
+
         mat = mattr.getMaterial()
         if mat and mat.hasKeyvalue("$basetexture"):
             tex = loader.loadTexture(mat.getKeyvalue("$basetexture"))
@@ -168,9 +168,9 @@ def __threadRevamp(models):
 
     def get_new_name(name):
         return "{0}{1}".format(name, id_alloc.allocate())
-    
+
     for mdl in models:
-    
+
         try:
             orig_mdl_filename = Filename(mdl.replace("\\", "/"))
             mdlNode = loader.loadModel(orig_mdl_filename)
@@ -182,7 +182,7 @@ def __threadRevamp(models):
             out_filename = Filename(get_revamp_bam(mdl).replace("\\", "/"))
             if (not os.path.exists(out_filename.getDirname())):
                 os.makedirs(out_filename.getDirname())
-                
+
             egg_out = Filename.fromOsSpecific(get_revamp_egg(mdl))
             if (not os.path.exists(out_filename.getDirname())):
                 os.makedirs(egg_out.getDirname())
@@ -192,13 +192,13 @@ def __threadRevamp(models):
             joint2geometry = {}
             floor_bins = []
             shadow_bins = []
-            
+
             is_changed = False
-            
+
             npc = mdlNode.findAllMatches("**")
-            
+
             node2clsType2mat = {}
-            
+
             def replaceTexturesWithMaterial(node):
                 state = node.getState()
                 name = node.getName()
@@ -206,111 +206,111 @@ def __threadRevamp(models):
 
                 stateDict = node2clsType2mat.get(name, None)
                 matName = node.getTag('Material')
-                
+
                 if stateDict:
-                    
+
                     for i, mat in stateDict.iteritems():
-                        print (i, mat)
-                    
+                        print(i, mat)
+
                     bspAttr = stateDict.get(matName, None)
-                    print 'BSP Attr: ' + str(bspAttr)
-                    
+                    print('BSP Attr: ' + str(bspAttr))
+
                     if bspAttr:
                         node.setState(bspAttr)
                         node.clearTag('Material')
-                        print 'BSP Attr: ' + str(bspAttr)
+                        print('BSP Attr: ' + str(bspAttr))
                         changed = True
                     else:
                         if isinstance(node.node(), GeomNode):
                             geomNode = node.node()
                             numGeoms = geomNode.getNumGeoms()
                             matName = geomNode.getTag('Material')
-                            
+
                             if matName:
-                            
+
                                 for i in range(numGeoms):
                                     state = geomNode.getGeomState(i)
                                     bspAttr = stateDict.get(matName, None)
-                                    
+
                                     if bspAttr:
-                                        print 'BSP Attr: ' + str(bspAttr)
+                                        print('BSP Attr: ' + str(bspAttr))
                                         state = state.removeAttrib(state.getClassType())
                                         state = state.setAttrib(bspAttr)
                                         geomNode.clearTag('Material')
                                         geomNode.setGeomState(i, state)
                                         changed = True
-                                    
+
                 children = node.getChildren()
                 for child in children:
                     if replaceTexturesWithMaterial(child):
                         changed = True
                 return changed
-                    
+
             def appendMaterial(name, node, material, pos=-1):
                 stateDict = node2clsType2mat.get(name, None)
-                
+
                 if not stateDict:
                     stateDict = {}
                 stateDict[str(pos)] = material
                 node2clsType2mat[name] = stateDict
                 node.setTag('Material', str(pos))
-                
+
                 for i, mat in stateDict.iteritems():
-                    print (i, mat)
-                    
+                    print(i, mat)
+
             def replaceMaterialsWithTexture(node):
                 state = node.getState()
                 name = node.getName()
                 changed = False
-                
+
                 if state.getAttrib(BSPMaterialAttrib):
                     bspAttr = state.getAttrib(BSPMaterialAttrib)
                     tAttr = texture_from_bsp_mat(bspAttr)
-                    
+
                     node.clearAttrib(BSPMaterialAttrib)
                     newState = state.setAttrib(tAttr)
                     appendMaterial(name, node, bspAttr, pos=big_random())
-                    print 'Placed Texture Attrib in Slot: {0}'.format(str(-1))
-                    
+                    print('Placed Texture Attrib in Slot: {0}'.format(str(-1)))
+
                     node.setState(newState)
                     changed = True
-                
+
                 if isinstance(node.node(), GeomNode):
                     geomNode = node.node()
                     numGeoms = geomNode.getNumGeoms()
-                    
+
                     for i in range(numGeoms):
                         state = geomNode.getGeomState(i)
-                        
+
                         if state.getAttrib(BSPMaterialAttrib):
                             bspAttr = state.getAttrib(BSPMaterialAttrib)
                             tAttr = texture_from_bsp_mat(bspAttr)
                             geomNode.setPreserved(True)
-                            
+
                             if tAttr:
                                 texture = tAttr.getTexture()
                                 if texture:
-                                    
+
                                     newState = state.removeAttrib(BSPMaterialAttrib)
                                     newState = newState.setAttrib(tAttr)
 
                                     appendMaterial(geomNode.getName(), geomNode, bspAttr, pos=big_random())
-                                    print 'Placed Texture Attrib in Slot: {0}'.format(str(i))
+                                    print('Placed Texture Attrib in Slot: {0}'.format(str(i)))
 
                                     geomNode.setGeomState(i, newState)
                                     changed = True
-                                    
+
                 children = node.getChildren()
                 for child in children:
                     if replaceMaterialsWithTexture(child):
                         changed = True
                 return changed
-                    
+
             is_changed = replaceMaterialsWithTexture(mdlNode)
-            
+
             if (is_character(mdlNode)):
                 char = get_character(mdlNode)
-                
+
                 npc = mdlNode.findAllMatches("**")
 
                 for child in char.getChildren():
@@ -324,17 +324,17 @@ def __threadRevamp(models):
                                 joint_child.setName(joint_child.getName() + "_geom")
                             joint2geometry[child.getName()].append(joint_child.getName())
                             is_changed = True
-                    
+
             else:
                 npc = mdlNode.findAllMatches("**")
-                
+
                 for i in range(npc.getNumPaths()):
                     child = npc[i]
-                        
+
                     if (child.node().isOfType(GeomNode.getClassType())):
                         if (child.node().getNumGeoms() == 0):
                             continue
-                            
+
                         gs = child.node().getGeomState(0)
                         if (gs.hasAttrib(CullBinAttrib.getClassType())):
                             cba = gs.getAttrib(CullBinAttrib.getClassType())
@@ -342,7 +342,7 @@ def __threadRevamp(models):
                                 floor_bins.append(i)
                             elif (cba.getBinName() == 'shadow'):
                                 shadow_bins.append(i)
-                                
+
             # Avoid unnecessarily writing to disk if we haven't made any changes.
             # Optimization to speed up the process.
             #if (is_changed):
@@ -350,7 +350,7 @@ def __threadRevamp(models):
 
             if (do_bam2egg):
                 runproc("{0} -o {1} {2}".format(bam2egg, get_revamp_egg(mdl), get_revamp_bam(mdl)))
-                
+
             if (do_trans and not is_character(mdlNode)):
                 runproc("{0} -o {1} -nv 80 -tbnall {2}".format(egg_trans, get_revamp_egg(mdl), get_revamp_egg(mdl)))
 
@@ -370,7 +370,7 @@ def __threadRevamp(models):
                     else:
                         # It's regular old geometry
                         flag_list.append(name)
-                    
+
                 cmd = eggopt
                 cmd += "-o {0} ".format(get_revamp_egg(mdl))
                 cmd += "-nv 80 -tbnall -keepall -dart default "
@@ -378,7 +378,7 @@ def __threadRevamp(models):
                     cmd += "-expose " + exp + " "
                 for flg in flag_list:
                     cmd += "-flag " + flg + " "
-                
+
                 cmd += get_revamp_egg(mdl)
                 runproc(cmd)
 
@@ -387,12 +387,12 @@ def __threadRevamp(models):
                 newfile = []
 
                 is_changed = False
-                
+
                 prev_line = ""
 
                 inShadowGroup = False
                 ignoreUntilNewBlock = False
-                
+
                 lines = revampfile.readlines()
 
                 for line in lines:
@@ -403,31 +403,31 @@ def __threadRevamp(models):
                     newline = newline.replace("rgb_alpha", "rgba")
                     # Irritating thing that bam2egg does.
                     newline = newline.replace(".egg", "")
-                    
+
                     # Let's handle when we manually insert a correction block.
                     if ignoreUntilNewBlock:
                         noWhitespaceLine = newline.replace(" ", "")
                         if noWhitespaceLine.startswith('}'):
                             ignoreUntilNewBlock = False
                         continue
-                    
+
                     if "<Scalar> bin" in newline:
                         binName = egg_extract_bin_name(newline)
-                        
+
                         if binName in ['ground', 'shadow']:
                             sortOrder = GROUND_BIN if binName == 'ground' else SHADOW_BIN
                             replacement = "<Scalar> draw-order { %s }" % sortOrder
                             prev_line = prev_line.replace("<Scalar> draw-order { 0 }", replacement)
 
                         newfile.insert(len(newfile) - 2, prev_line)
-                        
+
                     if "<Group>" in newline:
                         inShadowGroup = "shadow" in newline
-                        
+
                     if inShadowGroup and "<Scalar> alpha" in newline:
                         alphaBeginIndex = newline.index("<Scalar> alpha")
                         newline = newline[0:alphaBeginIndex] + "<Scalar> alpha { blend_no_occlude }\n"
-                        
+
                     if inShadowGroup and "<Scalar> draw-order" in newline:
                         drawOrderBeginIndex = newline.index("<Scalar> draw-order")
                         indentationIndex = newline.index("<Scalar>")
@@ -439,7 +439,7 @@ def __threadRevamp(models):
                     if "<Scalar> alpha-file" in newline:
                         nextline = "  <Scalar> alpha { dual }\n"
                         newfile.append(nextline)
-                        
+
                     if "<Texture> drop-shadow" in newline:
                         # Let's manually input the texture information we need for this block.
                         newline = newline + '  "phase_3/maps/drop-shadow.jpg"\n'
@@ -451,15 +451,15 @@ def __threadRevamp(models):
                         newline = newline + '  <Scalar> magfilter { linear_mipmap_linear }\n'
                         newline = newline + '  <Scalar> envtype { modulate }\n'
                         newline = newline + '}\n'
-                        
+
                         ignoreUntilNewBlock = True
                         newfile.append(newline)
                         continue
-                    
+
                     if (newline != line):
                         is_changed = True
-                        
-                        
+
+
                     newfile.append(newline)
                     prev_line = line
 
@@ -478,11 +478,11 @@ def __threadRevamp(models):
 
             if (fix_revampbam):
                 revamp = loader.loadModel(get_revamp_bam(mdl), noCache=True)
-                
+
                 npc = revamp.findAllMatches('**')
-                
+
                 is_changed = replaceTexturesWithMaterial(revamp)
-                
+
                 if (is_character(revamp)):
 
                     char = get_character(revamp)
@@ -502,28 +502,28 @@ def __threadRevamp(models):
                         if (i in floor_bins):
                             child.setTransparency(TransparencyAttrib.M_dual, 1)
                             if (not child.node().isOfType(GeomNode.getClassType())):
-                                print "ERROR: Node at index {0} marked for ground bin, but it's not a GeomNode ({1})".format(i, child.getName())
+                                print("ERROR: Node at index {0} marked for ground bin, but it's not a GeomNode ({1})".format(i, child.getName()))
                                 continue
                             for j in range(child.node().getNumGeoms()):
                                 gs = child.node().getGeomState(j)
                                 gs.setAttrib(CullBinAttrib.make('ground', 18))
                                 gs.setAttrib(TransparencyAttrib.make(TransparencyAttrib.M_dual))
                                 is_changed = True
-                                
+
                         if (i in shadow_bins):
                             child.setTransparency(TransparencyAttrib.M_dual, 1)
                             if (not child.node().isOfType(GeomNode.getClassType())):
-                                print "ERROR: Node at index {0} marked for shadow bin, but it's not a GeomNode ({1})".format(i, child.getName())
+                                print("ERROR: Node at index {0} marked for shadow bin, but it's not a GeomNode ({1})".format(i, child.getName()))
                                 continue
                             for j in range(child.node().getNumGeoms()):
                                 gs = child.node().getGeomState(j)
                                 gs.setAttrib(CullBinAttrib.make('shadow', 19))
                                 gs.setAttrib(TransparencyAttrib.make(TransparencyAttrib.M_dual))
                                 is_changed = True
-                                
+
                 if (is_changed):
                     revamp.writeBamFile(get_revamp_bam(mdl))
-                    print 'Wrote: ' + get_revamp_bam(mdl)
+                    print('Wrote: ' + get_revamp_bam(mdl))
 
                 revamp.removeNode()
 
@@ -531,7 +531,7 @@ def __threadRevamp(models):
         except Exception as e:
             report_error(mdl, str(e))
             raise e
-            
+
         prog_lock.acquire()
         global __progress
         __progress += 1
@@ -540,27 +540,27 @@ def __threadRevamp(models):
 
 
 if want_threads:
-    print len(orig_models), "models in total"
+    print(len(orig_models), "models in total")
     numModels = len(orig_models)
     numThreads = 8
-    print numThreads, "threads"
+    print(numThreads, "threads")
     modelsPerThread = int(numModels / numThreads)
     threads = []
     for i in range(numThreads):
         firstModel = modelsPerThread * i
         models = list(orig_models[firstModel:firstModel+modelsPerThread])
-        
+
         # Add on the rest of the models for the last thread
         if i == numThreads - 1 and len(orig_models) > firstModel+modelsPerThread:
             models += orig_models[firstModel+modelsPerThread:]
-            
-        print len(models), "models on thread", i
+
+        print(len(models), "models on thread", i)
         t = Thread(target = __threadRevamp, args = (models,))
         threads.append(t)
-        
+
     for t in threads:
         t.start()
-        
+
     while True:
         prog_lock.acquire()
         prog = int(__progress)
@@ -574,12 +574,12 @@ if want_threads:
         if alive == 0:
             break
 else:
-    print "Running without threads"
+    print("Running without threads")
     __threadRevamp(orig_models)
 
 if len(errors) > 0:
-    print "Errors whilst revamping:"
+    print("Errors whilst revamping:")
     for error in errors:
-        print "\t{0}\t:\t{1}".format(error[0], error[1])
+        print("\t{0}\t:\t{1}".format(error[0], error[1]))
 
-print "Done!"
+print("Done!")

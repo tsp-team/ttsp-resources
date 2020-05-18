@@ -20,13 +20,13 @@ def compress(filename):
     tf = tarfile.open(nameWithTarSuffix(filename), mode="w:gz")
     tf.add(filename)
     tf.close()
-    print "Compressed {0}!".format(filename)
+    print("Compressed {0}!".format(filename))
 
 def decompress(filename):
     """ This is expecting a phase filename with the .mf extension """
     tf = tarfile.open(nameWithTarSuffix(filename), mode="r")
     tf.extract(filename)
-    print "Decompressed {0}!".format(filename)
+    print("Decompressed {0}!".format(filename))
 
 def nameWithTarSuffix(filename):
     return filename[:-3] + ".tar.gz"
@@ -48,9 +48,9 @@ mode = args.mode.lower()
 
 if not (filename == "all" or filename == "*"):
     filename = possiblyCorrectName(filename)
-    
+
     if not filename in phases:
-        print "{0} is not a valid phase file!".format(filename)
+        print("{0} is not a valid phase file!".format(filename))
         sys.exit()
     else:
         phases = [filename]

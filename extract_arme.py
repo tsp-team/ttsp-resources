@@ -14,7 +14,7 @@ def getChannelName(channel):
         return "Metallic"
     elif channel == CHANNEL_EMISSIVE:
         return "Emissive"
-        
+
 def setChannel(img, x, y, channel, val):
     if channel == CHANNEL_AO:
         img.setRed(x, y, val)
@@ -24,7 +24,7 @@ def setChannel(img, x, y, channel, val):
         img.setBlue(x, y, val)
     elif channel == CHANNEL_EMISSIVE:
         img.setAlpha(x, y, val)
-        
+
 def getChannel(img, x, y, channel):
     if channel == CHANNEL_AO:
         return img.getRed(x, y)
@@ -43,7 +43,7 @@ img.read(armeFilename)
 
 for i in range(4):
     name = getChannelName(i).lower()
-    print "Writing", name
+    print("Writing", name)
     chImg = PNMImage(img.getReadXSize(), img.getReadYSize())
     chImg.setNumChannels(1)
     chImg.setColorType(PNMImageHeader.CTGrayscale)
@@ -53,4 +53,4 @@ for i in range(4):
             chImg.setXel(x, y, val)
     chImg.write(Filename(armeFilename.getFullpathWoExtension() + "_" + name + ".png"))
 
-print "Done"
+print("Done")

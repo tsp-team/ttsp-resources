@@ -10,4 +10,4 @@ img.read(inputFilename)
 img.applyExponent(1.0/2.2)
 img.write(outputFilename)
 
-print "Done"
+print("Done")
