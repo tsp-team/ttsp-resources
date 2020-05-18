@@ -11,7 +11,7 @@ image = PNMImage(fn)
 
 imagergb = PNMImage(fnrgb)
 image.set_num_channels(4)
-for x in xrange(image.get_x_size()):
-    for y in xrange(image.get_y_size()):
+for x in range(image.get_x_size()):
+    for y in range(image.get_y_size()):
         image.set_channel(x, y, 3, imagergb.getChannel(x, y, 0))
 image.write(fnout)

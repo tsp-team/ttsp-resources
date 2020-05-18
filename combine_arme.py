@@ -53,7 +53,7 @@ imgs = {}
 
 foundSize = False
 
-for i in xrange(len(fImgs)):
+for i in range(len(fImgs)):
     fImg, is_sRGB = fImgs[i]
     if fImg.exists():
         img = PNMImage()
@@ -89,8 +89,8 @@ for channel, img in imgs.items():
     print "Filling in", getChannelName(channel), "channel..."
     if isinstance(img, float):
         print "Value", img
-    for x in xrange(size[0]):
-        for y in xrange(size[1]):
+    for x in range(size[0]):
+        for y in range(size[1]):
             if isinstance(img, float):
                 setChannel(output, x, y, channel, img)
             else:

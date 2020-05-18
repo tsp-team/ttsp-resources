@@ -23,7 +23,7 @@ def boneFrameString(boneId, pos, rot):
 FLT_EPSILON = 1e-5
 
 def normalizeMat3(mat):
-    for i in xrange(3):
+    for i in range(3):
         mat[i] = Vec3(mat[i][0], mat[i][1], mat[i][2]).normalized()
     return mat
     
@@ -105,7 +105,7 @@ class Skeleton:
         if not "Bundle" in group.__class__.__name__:
             self.addBone(group, parentGroup)
             
-        for i in xrange(group.getNumChildren()):
+        for i in range(group.getNumChildren()):
             self.r_traverseSkeleton(group.getChild(i), group if not isRoot else parentGroup)
         
     def addBone(self, bone, parentBone = None):
@@ -133,7 +133,7 @@ class Skeleton:
         ret = "nodes\n"
         if len(self.bones):
             boneKeys = sorted(self.bones.keys())
-            for i in xrange(len(boneKeys)):
+            for i in range(len(boneKeys)):
                 boneId = boneKeys[i]
                 ret += "{0} \"{1}\" {2}\n".format(boneId, self.getBoneName(boneId), self.getBoneParent(boneId))
         else:
@@ -173,7 +173,7 @@ def processModel(path):
             smd += "time 0\n"
             if isCharacter:
                 boneIds = sorted(nodes.bones.keys())
-                for iBone in xrange(len(boneIds)):
+                for iBone in range(len(boneIds)):
                     boneId = boneIds[iBone]
                     bone = nodes.bones[boneId]
                     if isinstance(bone, CharacterJoint):
@@ -197,13 +197,13 @@ def processModel(path):
                 blendTable = vdata.getTransformBlendTable()
                 for prim in geom.getPrimitives():
                     numTris = prim.getNumPrimitives()
-                    for nTri in xrange(numTris):
+                    for nTri in range(numTris):
                         start = prim.getPrimitiveStart(nTri)
                         end = prim.getPrimitiveEnd(nTri)
                         
                         smd += "no_material\n"
                         
-                        for primVert in xrange(start, end):
+                        for primVert in range(start, end):
                             vertIdx = prim.getVertex(primVert)
                             
                             reader = GeomVertexReader(vdata)
@@ -234,7 +234,7 @@ def processModel(path):
                                 blend = blendTable.getBlend(nBlend)
                                 numTransforms = blend.getNumTransforms()
                                 smd += "{0} ".format(numTransforms)
-                                for nTransform in xrange(numTransforms):
+                                for nTransform in range(numTransforms):
                                     transform = blend.getTransform(nTransform)
                                     if isinstance(transform, JointVertexTransform):
                                         boneId = nodes.getBoneId(transform.getJoint())
@@ -270,9 +270,9 @@ def processModel(path):
         smd += "skeleton\n"
         numFrames = bundle.getNumFrames()
         boneIds = sorted(nodes.bones.keys())
-        for iFrame in xrange(numFrames):
+        for iFrame in range(numFrames):
             smd += "time {0}\n".format(iFrame)
-            for iBone in xrange(len(boneIds)):
+            for iBone in range(len(boneIds)):
                 bone = nodes.getBone(boneIds[iBone])
                 if isinstance(bone, AnimChannelACMatrixSwitchType):
                     boneFrameMat = Mat4()

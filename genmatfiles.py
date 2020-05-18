@@ -99,14 +99,14 @@ def r_processNode(node):
 		node.setState(nProcState)
 	
 	if node.isOfType(GeomNode.getClassType()):
-		for i in xrange(node.getNumGeoms()):
+		for i in range(node.getNumGeoms()):
 			state = node.getGeomState(i)
 			procState = processState(state)
 			if (procState != state):
 				node.setGeomState(i, procState)
 	
 	# process the children
-	for i in xrange(node.getNumChildren()):
+	for i in range(node.getNumChildren()):
 		r_processNode(node.getChild(i))
     
 def processModel(mdlfile):

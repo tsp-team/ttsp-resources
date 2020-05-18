@@ -228,7 +228,7 @@ def __threadRevamp(models):
                             
                             if matName:
                             
-                                for i in xrange(numGeoms):
+                                for i in range(numGeoms):
                                     state = geomNode.getGeomState(i)
                                     bspAttr = stateDict.get(matName, None)
                                     
@@ -279,7 +279,7 @@ def __threadRevamp(models):
                     geomNode = node.node()
                     numGeoms = geomNode.getNumGeoms()
                     
-                    for i in xrange(numGeoms):
+                    for i in range(numGeoms):
                         state = geomNode.getGeomState(i)
                         
                         if state.getAttrib(BSPMaterialAttrib):
@@ -328,7 +328,7 @@ def __threadRevamp(models):
             else:
                 npc = mdlNode.findAllMatches("**")
                 
-                for i in xrange(npc.getNumPaths()):
+                for i in range(npc.getNumPaths()):
                     child = npc[i]
                         
                     if (child.node().isOfType(GeomNode.getClassType())):
@@ -496,7 +496,7 @@ def __threadRevamp(models):
                                     is_changed = True
                 else:
                     npc = revamp.findAllMatches("**")
-                    for i in xrange(npc.getNumPaths()):
+                    for i in range(npc.getNumPaths()):
                         child = npc[i]
 
                         if (i in floor_bins):
@@ -504,7 +504,7 @@ def __threadRevamp(models):
                             if (not child.node().isOfType(GeomNode.getClassType())):
                                 print "ERROR: Node at index {0} marked for ground bin, but it's not a GeomNode ({1})".format(i, child.getName())
                                 continue
-                            for j in xrange(child.node().getNumGeoms()):
+                            for j in range(child.node().getNumGeoms()):
                                 gs = child.node().getGeomState(j)
                                 gs.setAttrib(CullBinAttrib.make('ground', 18))
                                 gs.setAttrib(TransparencyAttrib.make(TransparencyAttrib.M_dual))
@@ -515,7 +515,7 @@ def __threadRevamp(models):
                             if (not child.node().isOfType(GeomNode.getClassType())):
                                 print "ERROR: Node at index {0} marked for shadow bin, but it's not a GeomNode ({1})".format(i, child.getName())
                                 continue
-                            for j in xrange(child.node().getNumGeoms()):
+                            for j in range(child.node().getNumGeoms()):
                                 gs = child.node().getGeomState(j)
                                 gs.setAttrib(CullBinAttrib.make('shadow', 19))
                                 gs.setAttrib(TransparencyAttrib.make(TransparencyAttrib.M_dual))
@@ -546,7 +546,7 @@ if want_threads:
     print numThreads, "threads"
     modelsPerThread = int(numModels / numThreads)
     threads = []
-    for i in xrange(numThreads):
+    for i in range(numThreads):
         firstModel = modelsPerThread * i
         models = list(orig_models[firstModel:firstModel+modelsPerThread])
         
