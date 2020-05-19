@@ -9,7 +9,8 @@ orig_models = []
 for phase in phases:
     orig_models += glob2.glob("non_revamp\\phase_{0}\\models\\**\\*.bam".format(phase))
 
-vertexDatas = {}orig2modVdata = {}
+vertexDatas = {}
+orig2modVdata = {}
 
 def isAnimation(node):
     return not node.find("**/+AnimBundleNode").isEmpty()
@@ -255,14 +256,28 @@ def processPrimitive(prim, vdata, geom):
         vertexDatas[vdata].primitives.append(primData)
 
 def processGeom(geom, state):
-    global vertexDatas    origVData = geom.getVertexData()
-    if not orig2modVdata.has_key(origVData):        vdata = geom.modifyVertexData()        orig2modVdata[origVData] = vdata        vertexDatas[vdata] = VertexData(vdata)    else:        vdata = orig2modVdata[origVData]    if not vertexDatas.has_key(vdata):        # question mark?        return 0
+    global vertexDatas
+    origVData = geom.getVertexData()
+    if not orig2modVdata.has_key(origVData):
+        vdata = geom.modifyVertexData()
+        orig2modVdata[origVData] = vdata
+        vertexDatas[vdata] = VertexData(vdata)
+    else:
+        vdata = orig2modVdata[origVData]
+
+    if not vertexDatas.has_key(vdata):
+        # question mark?
+        return 0
+
     vertexDatas[vdata].geoms.append(geom)
-    vertexDatas[vdata].geomStates.append(state)
+    vertexDatas[vdata].geomStates.append(state)
+
     #print("appended geom", geom, "to vertex data", vertexDatas[vdata])
     for i in range(geom.getNumPrimitives()):
         prim = geom.modifyPrimitive(i)
-        processPrimitive(prim, vdata, len(vertexDatas[vdata].geoms) - 1)    return 1
+        processPrimitive(prim, vdata, len(vertexDatas[vdata].geoms) - 1)
+
+    return 1
 
 def processGeomNode(geomNode):
     # A GeomNode is a node in the scene graph which contains Geom objects,
@@ -277,11 +292,13 @@ def processGeomNode(geomNode):
     currentGeomNode = geomNode.getName()
 
     global vertexDatas
-    vertexDatas = {}    orig2modVdata = {}
+    vertexDatas = {}
+    orig2modVdata = {}
 
     for i in range(geomNode.getNumGeoms()):
         geom = geomNode.modifyGeom(i)
-        if not processGeom(geom, geomNode.getGeomState(i)):            return 0
+        if not processGeom(geom, geomNode.getGeomState(i)):
+            return 0
 
     geomNode.removeAllGeoms()
 
@@ -294,16 +311,40 @@ def processGeomNode(geomNode):
             references.append(0)
             for prim in vertexData.primitives:
                 if row in prim.vertices:
-                    references[row] += 1        # This is a cheat, we know that all of the unreferenced vertices are at the beginning.        # So we'll just subtract the number of unreferenced vertices from each primitive index.        unreferenced = references.count(0)        for prim in vertexData.primitives:            for i in range(len(prim.vertices)):                prim.vertices[i] -= unreferenced  GeomVertexData(vertexData.vdata.getName(), vertexData.vdata.getFormat(), vertexData.vdata.getUsageHint())        for i in range(unreferenced, vertexData.vdata.getNumRows()):            newData.copyRowFrom(i - unreferenced, vertexData.vdata, i, Thread.getCurrentThread())   ata.vda
+                    references[row] += 1
 
-        for i in range(len(vertexData.geoms)):            geom = vertexData.geoms[i]
-            geom.clearPrimitives()            state = vertexData.geomStates[i]            # Apply the modified GeomVertexData to the Geom.            # It should have a new filled in vertex normal column.            geom.setVertexData(vertexData.vdata)            geomNode.addGeom(geom, state)
+        # This is a cheat, we know that all of the unreferenced vertices are at the beginning.
+        # So we'll just subtract the number of unreferenced vertices from each primitive index.
+        unreferenced = references.count(0)
+        for prim in vertexData.primitives:
+            for i in range(len(prim.vertices)):
+                prim.vertices[i] -= unreferenced
 
-        for primData in vertexData.primitives:
-            if len(primData.vertices) < 3:
-                print("Error: primitive with less than 3 verts")
-                return 0
-                continue
+  GeomVertexData(vertexData.vdata.getName(), vertexData.vdata.getFormat(), vertexData.vdata.getUsageHint())
+        for i in range(unreferenced, vertexData.vdata.getNumRows()):
+            newData.copyRowFrom(i - unreferenced, vertexData.vdata, i, Thread.getCurrentThread())
+
+   ata.vda
+
+        for i in range(len(vertexData.geoms)):
+            geom = vertexData.geoms[i]
+            geom.clearPrimitives()
+            state = vertexData.geomStates[i]
+            # Apply the modified GeomVertexData to the Geom.
+            # It should have a new filled in vertex normal column.
+            geom.setVertexData(vertexData.vdata)
+            geomNode.addGeom(geom, state)
+
+        for primData in vertexData.primitives:
+
+            if len(primData.vertices) < 3:
+
+                print("Error: primitive with less than 3 verts"
+)
+                return 0
+
+                continue
+
             prim = GeomTriangles(primData.primitive.getUsageHint())
             geom = vertexData.geoms[primData.geomIdx]
             prim.addVertices(*primData.vertices)
@@ -320,8 +361,13 @@ def processGeomNode(geomNode):
             #        reader.setRow(primData.vertices[i])
             #        data = reader.getData1f()
             #        print("\t", data)
-        for i in range(len(vertexData.geoms)):            geom = vertexData.geoms[i]            state = vertexData.geomStates[i]            geomNode.addGeom(geom, state)
-    return 1
+
+        for i in range(len(vertexData.geoms)):
+            geom = vertexData.geoms[i]
+            state = vertexData.geomStates[i]
+            geomNode.addGeom(geom, state)
+
+    return 1
 
 def processModel(mdlFile):
     print("Processing model file `{0}`".format(mdlFile))
@@ -332,8 +378,10 @@ def processModel(mdlFile):
     if not isAnimation(mdl):
         geomNodes = mdl.findAllMatches("**/+GeomNode")
         for gnnp in geomNodes:
-            if not processGeomNode(gnnp.node()):
-                print("Skipping, error processing")
+            if not processGeomNode(gnnp.node()):
+
+                print("Skipping, error processing"
+)
                 return
         outFilename = Filename(mdlFile.getFullpath().replace("non_revamp", "revamp2"))
         if (not os.path.exists(outFilename.getDirname())):
