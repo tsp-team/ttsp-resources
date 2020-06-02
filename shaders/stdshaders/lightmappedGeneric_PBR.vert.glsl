@@ -92,8 +92,8 @@ void main()
     #endif
     
     #ifdef BUMPMAP
-        l_tangent = vec4(mat3(p3d_ModelViewMatrix) * p3d_Tangent.xyz, 0.0);
-        l_binormal = vec4(mat3(p3d_ModelViewMatrix) * -p3d_Binormal.xyz, 0.0);
+        l_tangent = normalize(vec4(mat3(p3d_ModelViewMatrix) * p3d_Tangent.xyz, 0.0));
+        l_binormal = normalize(vec4(mat3(p3d_ModelViewMatrix) * -p3d_Binormal.xyz, 0.0));
         // Just use the base texture coord for the normal map.
         l_texcoordBumpMap = texcoord;
     #endif
@@ -104,14 +104,14 @@ void main()
     
     #if defined(ENVMAP) || defined(HAS_SHADOW_SUNLIGHT)
         vec4 worldPos = p3d_ModelMatrix * p3d_Vertex;
-        l_worldNormal = p3d_ModelMatrix * vec4(p3d_Normal, 0);
+        l_worldNormal = normalize(p3d_ModelMatrix * vec4(p3d_Normal, 0));
     #endif
     
     #if defined(ENVMAP) || defined(HAS_SHADOW_SUNLIGHT)
         l_worldEyeToVert = wspos_view - worldPos;
         #ifdef BUMPMAP
-            l_tangentSpaceTranspose[0] = mat3(p3d_ModelMatrix) * p3d_Tangent.xyz;
-            l_tangentSpaceTranspose[1] = mat3(p3d_ModelMatrix) * -p3d_Binormal.xyz;
+            l_tangentSpaceTranspose[0] = normalize(mat3(p3d_ModelMatrix) * p3d_Tangent.xyz);
+            l_tangentSpaceTranspose[1] = normalize(mat3(p3d_ModelMatrix) * -p3d_Binormal.xyz);
             l_tangentSpaceTranspose[2] = l_worldNormal.xyz;
         #endif
     #endif

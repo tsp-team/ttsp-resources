@@ -308,7 +308,7 @@ void main()
                 lightType = lightTypes[i];
             #else
                 params.lColor = p3d_LightSource[i].diffuse;
-                params.lDir = p3d_ViewMatrixInverse * p3d_LightSource[i].position;
+                params.lDir = normalize(p3d_ViewMatrixInverse * p3d_LightSource[i].position);
                 params.lPos = params.lDir;
                 params.lAtten = vec4(p3d_LightSource[i].attenuation, 0.0);
                 params.falloff2 = vec4(0);
@@ -343,7 +343,7 @@ void main()
             #endif
             {
                 #ifndef BSP_LIGHTING
-                    params.lDir = p3d_ViewMatrixInverse * vec4(p3d_LightSource[i].spotDirection, 0);
+                    params.lDir = normalize(p3d_ViewMatrixInverse * vec4(p3d_LightSource[i].spotDirection, 0));
                     params.spotCosCutoff = p3d_LightSource[i].spotCosCutoff;
                     params.spotExponent = p3d_LightSource[i].spotExponent;
                 #endif

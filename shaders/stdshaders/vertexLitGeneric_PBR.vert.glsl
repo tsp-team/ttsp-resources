@@ -94,9 +94,9 @@ void main()
     #endif
 
     #ifdef NEED_WORLD_NORMAL
-        l_worldNormal = p3d_ModelMatrix * vec4(finalNormal, 0);
-        l_tangentSpaceTranspose[0] = mat3(p3d_ModelMatrix) * p3d_Tangent.xyz;
-        l_tangentSpaceTranspose[1] = mat3(p3d_ModelMatrix) * p3d_Binormal.xyz;
+        l_worldNormal = normalize(p3d_ModelMatrix * vec4(finalNormal, 0));
+        l_tangentSpaceTranspose[0] = normalize(mat3(p3d_ModelMatrix) * p3d_Tangent.xyz);
+        l_tangentSpaceTranspose[1] = normalize(mat3(p3d_ModelMatrix) * p3d_Binormal.xyz);
         l_tangentSpaceTranspose[2] = l_worldNormal.xyz;
     #endif
 
