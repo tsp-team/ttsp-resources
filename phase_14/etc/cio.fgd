@@ -209,7 +209,7 @@
         1 : "Yes"
     ]
     
-    spawnflags(flags) =
+    spawnflags(Flags) =
 	[
 		1   : "Starts Open" : 0
         2   : "Starts Locked" : 0
@@ -281,10 +281,12 @@
         0 : "No"
         1 : "Yes"
     ]
-    spawnflags(flags) =
+
+    spawnflags(Flags) =
     [
         1 : "Play everywhere" : 0
     ]
+
     randomDelayMin(string) : "Random delay min" : "1.0"
     randomDelayMax(string) : "Random delay max" : "20.0"
     
@@ -295,21 +297,23 @@
     input Stop(void) : "Stop the sound"
 ]
 
-@SolidClass base(Global,Targetname, Target, RenderFields, Angles, ZHLT, Moveable, Parent) = func_button : "Button" 
+@SolidClass base(Global, Targetname, Target, RenderFields, Angles, ZHLT, Moveable, Parent) = func_button : "Button" 
 [
 	health(integer) : "Health (shootable if > 0)"
 	master(string) : "Master" 
 	sounds(choices) : "Press sound" : "phase_5/audio/sfx/AA_drop_trigger_box.ogg"
 	wait(integer) : "delay before reset (-1 stay)" : 3
-	spawnflags(flags) =
+    
+	spawnflags(Flags) =
 	[
-		1: "Don't move" : 0
-        2: "Press when locked" : 0
-		4: "Toggle" : 0
-		8: "Sparks" : 0
-		16:"Touch Activates": 0
-        32:"Starts pressed"
+		1 : "Don't move" : 0
+        2 : "Press when locked" : 0
+		4 : "Toggle" : 0
+		8 : "Sparks" : 0
+		16 : "Touch Activates": 0
+        32 : "Starts pressed" : 0
 	]
+
 	locked_sound(sound) : "Locked Sound"
 	unlocked_sound(sound) : "Unlocked Sound"
     
