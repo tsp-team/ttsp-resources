@@ -1,3 +1,0 @@
-model "phase_13/models/minigame/minigame_area" [
-        store_node [ "prop" "mg_terrain" "" ]
-        ]
