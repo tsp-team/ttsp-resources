@@ -17,6 +17,7 @@
  
 #pragma include "shaders/stdshaders/common_frag.inc.glsl"
 #pragma include "shaders/stdshaders/common_lighting_frag.inc.glsl"
+#pragma include "shaders/stdshaders/common_fog_frag.inc.glsl"
 
 #ifdef HAS_TEXTURE
 uniform sampler2D p3d_Texture0;

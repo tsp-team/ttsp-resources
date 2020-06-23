@@ -7,12 +7,22 @@
  * @date October 31, 2018
  *
  */
- 
+
 #pragma once
 
 #ifdef FOG
 
-uniform vec4 fogData[2];
+#define FOG_LINEAR 				0
+#define FOG_EXPONENTIAL 		1
+#define FOG_EXPONENTIAL_SQUARED 2
+
+uniform struct p3d_FogParameters {
+  	vec4 color;
+  	float density;
+  	float start;
+  	float end;
+  	float scale; // 1.0 / (end - start)
+} p3d_Fog;
 
 void GetFogLinear(inout vec4 result, vec4 fogColor, float dist, vec4 fogData)
 {
@@ -38,10 +48,16 @@ void ApplyFog(inout vec4 result, vec4 eyePos)
 	#elif defined(BLEND_ADDITIVE)
 		vec4 fogColor = vec4(0, 0, 0, 1.0);
 	#else
-		vec4 fogColor = fogData[0];
+		vec4 fogColor = p3d_Fog.color;
 	#endif
 
-    GetFogExp(result, fogColor, dist, fogData[1].x);
+	#if FOG == FOG_EXPONENTIAL
+    	GetFogExp(result, fogColor, dist, p3d_Fog.density);
+	#elif FOG == FOG_EXPONENTIAL_SQUARED
+		GetFogExpSqr(result, fogColor, dist, vec4(p3d_Fog.density, p3d_Fog.start, p3d_Fog.end, p3d_Fog.scale));
+	#elif FOG == FOG_LINEAR
+		GetFogLinear(result, fogColor, dist, vec4(p3d_Fog.density, p3d_Fog.start, p3d_Fog.end, p3d_Fog.scale));
+	#endif
 }
 
 #endif
