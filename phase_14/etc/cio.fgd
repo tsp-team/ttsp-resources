@@ -576,9 +576,9 @@
 	SpotlightLength(string) : "Beam length" : "500.0"
 ]
 
-@PointClass base(Angles, Targetname, Parent) size(-16, -16, 0, 16 16 32) = prop_static : "Static prop"
+@PointClass base(Angles, Targetname, Parent) size(-16, -16, 0, 16 16 32) studio() = prop_static : "Static prop"
 [
-    modelpath(studio) : "Prop Model" : "models/smiley.egg.pz"
+    model(studio) : "Prop Model" : "models/smiley.egg.pz"
     scale(string) : "Scale of prop" : "1.0 1.0 1.0"
 
 	spawnflags(flags) = 
@@ -1021,7 +1021,7 @@
 
 @PointClass base(Targetname, Angles, Parent) = prop_dynamic : "Dynamic prop (can move, dynamically lit)"
 [
-    modelpath(studio) : "Prop Model" : ""
+    model(studio) : "Prop Model" : ""
     scale(string) : "Scale of prop" : "1.0 1.0 1.0"
 ]
 
