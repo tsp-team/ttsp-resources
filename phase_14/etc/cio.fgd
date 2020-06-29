@@ -488,12 +488,12 @@
 // lights
 //
 
-@PointClass base(Target, Targetname, Light, ZHLT_point, LightSource) iconsprite("materials/editor/lightbulb.mat") = light : "Invisible lightsource"
+@PointClass base(Target, Targetname, Light, ZHLT_point, LightSource) pointlight() iconsprite("materials/editor/lightbulb.mat") = light : "Invisible lightsource"
 [
 	spawnflags(flags) = [ 1 : "Initially dark" : 0 ]
 ]
 
-@PointClass base(Targetname, Target, Light, Angles, ZHLT_point, LightSource) iconsprite("materials/editor/lightbulb.mat") = light_spot : "Spotlight"
+@PointClass base(Targetname, Target, Light, Angles, ZHLT_point, LightSource) spotlight() iconsprite("materials/editor/lightbulb.mat") = light_spot : "Spotlight"
 [
 	_inner_cone(integer) : "Inner (bright) angle" : 30
 	_cone(integer) : "Outer (fading) angle" : 45
@@ -503,7 +503,7 @@
 	spawnflags(flags) = [ 1 : "Initially dark" : 0 ]
 ]
 
-@PointClass base(Targetname, Angles, ZHLT_point) iconsprite("materials/editor/light_env.mat") = light_environment : "Environment"
+@PointClass base(Targetname, Angles, ZHLT_point) dirlight() iconsprite("materials/editor/light_env.mat") = light_environment : "Environment"
 [
 	pitch(integer) : "Pitch" : 0 : "The downward pitch of the light from the sun. 0 is horizontal, -90 is straight down."
 	_light(color255) : "Brightness" : "255 255 255 200"

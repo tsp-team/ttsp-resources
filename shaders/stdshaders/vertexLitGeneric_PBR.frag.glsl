@@ -10,10 +10,10 @@
  * @file vertexLitGeneric_PBR.frag.glsl
  * @author Brian Lach
  * @date March 09, 2019
- * 
+ *
  * This is our big boy shader -- used for most models,
  * in particular ones that should be dynamically lit by light sources.
- * 
+ *
  * Supports a plethora of material effects:
  * - $basetexture
  * - $bumpmap
@@ -24,7 +24,7 @@
  * - $lightwarp
  * - $alpha/$translucent
  * - $selfillum
- * 
+ *
  * And these render effects:
  * - Clip planes
  * - Flat colors
@@ -35,12 +35,12 @@
  * - Cascaded shadow maps for directional lights
  * - Alpha testing
  * - Output normals/glow to auxiliary buffer
- * 
+ *
  * Will eventually support:
  * - $detail (finer detail at close distance)
  *
  */
- 
+
 #pragma optionNV(unroll all)
 
 #pragma include "shaders/stdshaders/common_lighting_frag.inc.glsl"
@@ -119,7 +119,7 @@ uniform vec4 p3d_ClipPlane[NUM_CLIP_PLANES];
 #ifdef LIGHTING
 
     #ifdef BSP_LIGHTING
-    
+
         uniform int lightTypes[NUM_LIGHTS];
         uniform int lightCount[1];
         uniform mat4 lightData[NUM_LIGHTS];
@@ -127,7 +127,7 @@ uniform vec4 p3d_ClipPlane[NUM_CLIP_PLANES];
         uniform vec3 ambientCube[6];
 
     #else // BSP_LIGHTING
-    
+
         uniform mat4 p3d_ViewMatrixInverse;
 
         uniform struct p3d_LightSourceParameters
@@ -135,7 +135,7 @@ uniform vec4 p3d_ClipPlane[NUM_CLIP_PLANES];
             vec4 diffuse;
             vec4 position;
             vec3 attenuation;
-            
+
             // Spotlights only
             float spotCosCutoff;
             float spotExponent;
@@ -178,7 +178,7 @@ void main()
     #if NUM_CLIP_PLANES > 0
         for (int i = 0; i < NUM_CLIP_PLANES; i++)
         {
-            if (!ClipPlaneTest(l_eyePosition, p3d_ClipPlane[i])) 
+            if (!ClipPlaneTest(l_eyePosition, p3d_ClipPlane[i]))
             {
                 // pixel outside of clip plane interiors
                 discard;
@@ -211,7 +211,7 @@ void main()
     #else
         vec4 finalEyeNormal = vec4(0.0);
     #endif
-	
+
     #ifdef NEED_WORLD_NORMAL
         vec4 finalWorldNormal = normalize(l_worldNormal);
         mat3 tangentSpaceTranspose = l_tangentSpaceTranspose;
@@ -230,20 +230,20 @@ void main()
                             tangentSpaceTranspose);
         #endif
     #endif
-    
+
     #ifdef NEED_WORLD_NORMAL
         float NdotV = clamp(abs(dot(finalWorldNormal.xyz, normalize(l_worldEyeToVert.xyz))), 0, 1);
     #else
         float NdotV = 1.0;
     #endif
-    
+
     // AO/Roughness/Metallic/Emissive properties
     #ifdef ARME
         vec4 armeParams = texture(armeSampler, l_texcoord.xy);
     #else
         vec4 armeParams = vec4(AO, ROUGHNESS, METALLIC, EMISSIVE);
     #endif
-    
+
     /////////////////////////////////////////////////////
     // Aux bitplane outputs
     #ifdef NEED_AUX_NORMAL
@@ -258,11 +258,11 @@ void main()
         o_aux_arme = armeParams;
     #endif
     /////////////////////////////////////////////////////
-    
+
     vec3 specularColor = mix(vec3(0.04), albedo.rgb, armeParams.z);
 
     #ifdef LIGHTING
-    
+
         // Initialize our lighting parameters
         LightingParams_t params = newLightingParams_t(
             l_worldPosition,
@@ -274,14 +274,14 @@ void main()
             specularColor,
             albedo.rgb
             );
-        
+
         vec3 ambientDiffuse = vec3(0, 0, 0);
         #ifdef BSP_LIGHTING
             ambientDiffuse += AmbientCubeLight(finalWorldNormal.xyz, ambientCube);
         #else
             ambientDiffuse += p3d_LightModel.ambient.rgb;
         #endif
-        
+
         #ifdef RIMLIGHT
             // Dedicated rim lighting for this pixel,
             // adds onto final lighting, uses ambient light as basis
@@ -289,7 +289,7 @@ void main()
                              l_worldEyeToVert.xyz, ambientDiffuse,
                              rimlightParams.x, rimlightParams.y);
         #endif
-        
+
         // Now factor in local light sources
         #ifdef BSP_LIGHTING
             int lightType;
@@ -308,14 +308,14 @@ void main()
                 lightType = lightTypes[i];
             #else
                 params.lColor = p3d_LightSource[i].diffuse;
-                params.lDir = normalize(p3d_ViewMatrixInverse * p3d_LightSource[i].position);
-                params.lPos = params.lDir;
+                bool isDirectional = p3d_LightSource[i].position.w == 0.0;
+                params.lPos = p3d_ViewMatrixInverse * p3d_LightSource[i].position;
+                params.lDir = normalize(params.lPos);
                 params.lAtten = vec4(p3d_LightSource[i].attenuation, 0.0);
                 params.falloff2 = vec4(0);
                 params.falloff3 = vec4(0);
-                bool isDirectional = params.lPos[3] == 0.0;
             #endif // BSP_LIGHTING
-            
+
             #ifdef BSP_LIGHTING
                 if (lightType == LIGHTTYPE_DIRECTIONAL)
             #else
@@ -347,22 +347,22 @@ void main()
                     params.spotCosCutoff = p3d_LightSource[i].spotCosCutoff;
                     params.spotExponent = p3d_LightSource[i].spotExponent;
                 #endif
-                
+
                 GetSpotlight(params);
             }
         }
-        
+
         vec3 totalRadiance = params.totalRadiance;
-        
+
     #else // LIGHTING
-    
+
         // No lighting, pixel starts fullbright.
         vec3 ambientDiffuse = vec3(1.0);
         vec3 totalRadiance = vec3(0);
-        
+
     #endif // LIGHTING
-    
-    // Modulate with albedo  
+
+    // Modulate with albedo
     ambientDiffuse.rgb *= albedo.rgb;
     ambientDiffuse.rgb *= armeParams.x;
 
@@ -374,22 +374,22 @@ void main()
 
     vec3 specularLighting = vec3(0);
 
-    //#ifdef LIGHTING        
+    //#ifdef LIGHTING
         #ifdef ENVMAP
 
             vec3 spec = SampleCubeMapLod(l_worldEyeToVert.xyz,
                                          finalWorldNormal,
                                          envmapSampler, armeParams.y).rgb;
-                                         
+
             // TODO: use a BRDF lookup texture in SHADERQUALITY_MEDIUM
             #if SHADER_QUALITY > SHADERQUALITY_LOW
                 vec3 iblspec = spec * EnvironmentBRDF(armeParams.y, NdotV, F);
             #else
                 vec3 iblspec = spec * F * specularColor;
             #endif
-            
+
             specularLighting += iblspec;
-        
+
         #endif
     //#endif
 
@@ -398,14 +398,14 @@ void main()
     #ifdef STATIC_PROP_LIGHTING
         totalLight *= l_staticVertexLighting;
     #endif
-    
+
     vec3 color = totalLight + specularLighting;
-    
+
     #ifdef SELFILLUM
         float selfillumMask = armeParams.w;
         color = mix(color, selfillumTint * albedo.rgb, selfillumMask);
     #endif
-    
+
     outputColor = vec4(color, albedo.a);
 
     #ifdef FOG
@@ -414,7 +414,7 @@ void main()
 
     // Done!
 	FinalOutput(outputColor);
-    
+
     #ifdef NEED_AUX_BLOOM
         #ifndef NO_BLOOM
             o_aux_bloom = outputColor;
