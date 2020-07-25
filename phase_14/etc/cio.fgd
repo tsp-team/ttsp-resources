@@ -573,6 +573,8 @@
 [
     model(studio) : "Prop Model" : "models/smiley.egg.pz"
 
+    testBool(boolean) : "Test Boolean" : "1" : "This is a test boolean value for the checkbox editor. Please work."
+
 	spawnflags(flags) =
 	[
 		1	:	"No Lighting"			: 0

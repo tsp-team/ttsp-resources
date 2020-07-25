@@ -7,7 +7,7 @@
  * @date October 30, 2018
  *
  */
- 
+
 #pragma once
 
 #pragma include "shaders/stdshaders/common.inc.glsl"
@@ -20,34 +20,34 @@ bool AlphaTest(float alpha)
 {
 	#if ALPHA_TEST == 1 // never draw
 		return false;
-        
+
 	#elif ALPHA_TEST == 2 // less
 		return alpha < ALPHA_TEST_REF;
-        
+
 	#elif ALPHA_TEST == 3 // equal
 		return alpha == ALPHA_TEST_REF;
-        
+
 	#elif ALPHA_TEST == 4 // less equal
 		return alpha <= ALPHA_TEST_REF;
-        
+
 	#elif ALPHA_TEST == 5 // greater
 		return alpha > ALPHA_TEST_REF;
-        
+
 	#elif ALPHA_TEST == 6 // not equal
 		return alpha != ALPHA_TEST_REF;
-        
+
 	#elif ALPHA_TEST == 7 // greater equal
 		return alpha >= ALPHA_TEST_REF;
-        
+
 	#else
         return true;
-        
+
     #endif
 }
 
 bool ClipPlaneTest(vec4 position, vec4 clipPlane)
 {
-	return (dot(position.xyz, clipPlane.xyz) + clipPlane.w) > 0;
+	return (dot(clipPlane, position) >= 0);
 }
 
 void FinalOutput(inout vec4 color)
